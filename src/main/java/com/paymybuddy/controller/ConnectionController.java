@@ -36,8 +36,6 @@ public class ConnectionController {
         List<Connection> connections= connectionService.findAllConnectionsByUserId(persistedUser.getId());
         model.addAttribute("connections",connections);
 
-        model.addAttribute("message","connection Successfully Created");
-
         return "home :: #selectConnection";
     }
 }
