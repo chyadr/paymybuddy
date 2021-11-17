@@ -1,0 +1,39 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20211111-1" author="chaimaa">
+        <sql splitStatements="false">
+            CREATE TABLE pay_account
+            (
+            id INT PRIMARY KEY NOT NULL,
+            user_id int  NOT NULL,
+            balance DECIMAL(10,2),
+            FOREIGN KEY (user_id) REFERENCES pay_user(id)
+            );
+        </sql>
+
+    </changeSet>
+
+    <changeSet id="20211111-2" author="chaimaa">
+        <sql>
+            insert into pay_account (id,user_id,balance)
+            values (nextval('seq_ids'),(select id from pay_user where first_name='David'),2000);
+
+            insert into pay_account (id,user_id,balance)
+            values (nextval('seq_ids'),(select id from pay_user where first_name='Caroline'),1000);
+
+        </sql>
+    </changeSet>
+
+    <changeSet  author="chaimaa"  id="20211111-3">
+        <dropColumn
+                     columnName="balance"
+                     schemaName="public"
+                     tableName="pay_user">
+        </dropColumn>
+    </changeSet>
+
+</databaseChangeLog>
