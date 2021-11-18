@@ -1,6 +1,7 @@
 package com.paymybuddy.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import liquibase.pro.packaged.L;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -39,12 +40,22 @@ public class Transaction implements Serializable {
         this.id = id;
     }
 
+    public Transaction id(Long id) {
+        this.id=id  ;
+        return this;
+    }
+
     public Connection getConnection() {
         return connection;
     }
 
     public void setConnection(Connection connection) {
         this.connection = connection;
+    }
+
+    public Transaction connection (Connection connection) {
+        this.connection= connection  ;
+        return this;
     }
 
     public BigDecimal getAmount() {
@@ -55,6 +66,11 @@ public class Transaction implements Serializable {
         this.amount = amount;
     }
 
+    public Transaction amount (BigDecimal amount) {
+        this.amount=amount  ;
+        return this;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -62,6 +78,12 @@ public class Transaction implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Transaction description(String description) {
+        this.description=description  ;
+        return this;
+    }
+
 
 
     @Override

@@ -1,9 +1,11 @@
 package com.paymybuddy.model;
 
 import com.fasterxml.jackson.annotation.*;
+import liquibase.pro.packaged.L;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -47,6 +49,12 @@ public class User implements Serializable {
         this.account = account;
     }
 
+    public User account (Account account) {
+        this.account=account  ;
+        return this;
+    }
+
+
     public Long getId() {
         return id;
     }
@@ -55,12 +63,23 @@ public class User implements Serializable {
         this.id = id;
     }
 
+    public User id(Long id) {
+        this.id=id  ;
+        return this;
+    }
+
+
     public String getFirstName() {
         return firstName;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public User firstName(String firstName) {
+        this.firstName=firstName  ;
+        return this;
     }
 
     public String getLastName() {
@@ -71,12 +90,22 @@ public class User implements Serializable {
         this.lastName = lastName;
     }
 
+    public User lastName(String lastName) {
+        this.lastName=lastName ;
+        return this;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public User email(String email) {
+        this.email=email  ;
+        return this;
     }
 
     public String getPassword() {
@@ -87,12 +116,22 @@ public class User implements Serializable {
         this.password = password;
     }
 
+    public User password(String password) {
+        this.password=password  ;
+        return this;
+    }
+
     public Set<Connection> getConnections() {
         return connections;
     }
 
     public void setConnections(Set<Connection> connections) {
         this.connections = connections;
+    }
+
+    public User connections(Set<Connection> connections) {
+        this.connections=connections  ;
+        return this;
     }
 
     @Override

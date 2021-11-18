@@ -31,6 +31,11 @@ public class Account implements Serializable {
         this.id = id;
     }
 
+    public Account id(Long id) {
+        this.id = id;
+        return this;
+    }
+
     public User getUser() {
         return user;
     }
@@ -39,12 +44,22 @@ public class Account implements Serializable {
         this.user = user;
     }
 
+    public Account user(User user) {
+        this.user = user;
+        return this;
+    }
+
     public BigDecimal getBalance() {
         return balance;
     }
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public Account balance(BigDecimal balance){
+        this.balance=balance;
+        return this;
     }
 
     @Override

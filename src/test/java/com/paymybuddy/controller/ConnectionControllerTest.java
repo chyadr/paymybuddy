@@ -7,7 +7,6 @@ import com.paymybuddy.service.impl.UserServiceDetails;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -15,14 +14,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.security.Principal;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(ConnectionController.class)
@@ -43,12 +40,13 @@ public class ConnectionControllerTest {
 
         doNothing().when(connectionService).saveConnection(any(), anyLong());
         when(userService.findByEmail(anyString())).thenReturn(Constants.user);
-        when(connectionService.findAllConnectionsByUserId(anyLong())).thenReturn(Constants.connections);
+        when(connectionService.findAllConnectionsByUserId(anyLong())).thenReturn(Constants.connectionsWithoutConnection);
 
         mvc.perform(post("/saveConnection").param("connectedUserId","1")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
-                .andExpect(status().isOk());
+                        .andExpect(status().isOk()).andExpect(model()
+        .attributeExists("connections"))
+                .andExpect(view().name("home :: #selectConnection"));
     }
-
 
 }

@@ -5,6 +5,7 @@ import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Embeddable
@@ -26,12 +27,22 @@ public class ConnectionId implements Serializable {
         this.user = user;
     }
 
+    public ConnectionId user(User user) {
+        this.user=user  ;
+        return this;
+    }
+
     public User getConnectedUser() {
         return connectedUser;
     }
 
     public void setConnectedUser(User connectedUser) {
         this.connectedUser = connectedUser;
+    }
+
+    public ConnectionId connectionId(User connectedUser) {
+        this.connectedUser=connectedUser  ;
+        return this;
     }
 
     @Override

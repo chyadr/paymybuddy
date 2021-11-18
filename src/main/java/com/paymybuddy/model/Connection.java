@@ -35,6 +35,11 @@ public class Connection implements Serializable {
         this.connectionId = connectionId;
     }
 
+    public Connection connectionId(ConnectionId connectionId) {
+        this.connectionId = connectionId;
+        return this;
+    }
+
     public User getUser() {
         return connectionId.getUser();
     }
@@ -43,12 +48,21 @@ public class Connection implements Serializable {
         this.connectionId.setUser(user);
     }
 
+    public Connection user(User user) {
+        this.connectionId.setUser(user);
+        return this;
+    }
     public User getConnectedUser() {
         return connectionId.getConnectedUser();
     }
 
     public void setConnectedUser(User connectedUser) {
         this.connectionId.setConnectedUser(connectedUser);
+    }
+
+    public Connection connectedUser(User connectedUser) {
+        this.connectionId.setConnectedUser(connectedUser);
+        return this;
     }
 
 
@@ -58,6 +72,11 @@ public class Connection implements Serializable {
 
     public void setTransactions(List<Transaction> transactions) {
         this.transactions = transactions;
+    }
+
+    public Connection transactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+        return this;
     }
 
     @Override
