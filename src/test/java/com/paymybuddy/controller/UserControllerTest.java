@@ -1,7 +1,6 @@
 package com.paymybuddy.controller;
 
 import com.paymybuddy.Constants;
-import com.paymybuddy.service.impl.ConnectionService;
 import com.paymybuddy.service.impl.UserService;
 import com.paymybuddy.service.impl.UserServiceDetails;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -44,5 +42,6 @@ public class UserControllerTest {
         .attributeExists("message"))
                 .andExpect(view().name("login"));
     }
+
 
 }

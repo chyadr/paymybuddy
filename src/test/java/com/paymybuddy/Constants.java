@@ -3,10 +3,9 @@ package com.paymybuddy;
 import com.paymybuddy.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,5 +22,11 @@ public static final Account account= new Account().id(3l).balance(BigDecimal.val
     public static final List<Transaction> transactionsWithConnection= Collections.singletonList(transaction);
     public static final Page<Transaction> pageTransaction= new PageImpl<>(transactionsWithConnection);
     public static final List<Connection> connectionsWithoutConnection= Collections.singletonList(connection.transactions(transactionsWithoutConnection));
+    public static final Principal principal = new Principal() {
+        @Override
+        public String getName() {
+            return "name";
+        }
+    };
 }
 
