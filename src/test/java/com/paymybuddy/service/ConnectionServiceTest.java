@@ -5,19 +5,16 @@ import com.paymybuddy.model.Connection;
 import com.paymybuddy.repository.ConnectionRepository;
 import com.paymybuddy.repository.UserRepository;
 import com.paymybuddy.service.impl.ConnectionService;
-import com.paymybuddy.service.impl.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
-import static com.paymybuddy.Constants.connectedUser;
-import static com.paymybuddy.Constants.user;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -33,8 +30,7 @@ public class ConnectionServiceTest {
         private ConnectionRepository connectionRepository;
         @Mock
         private UserRepository userRepository;
-        @Mock
-        private UserService userService;
+
 
 
         @Test

@@ -14,6 +14,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 
 import static com.paymybuddy.Constants.user;
+import static com.paymybuddy.Constants.users;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,9 +56,10 @@ public class UserServiceTest {
     }
     @Test
     public void givenId_FindAllNonConnectedUsersByUserId_thenReturnUsers(){
-        when(userRepository.findAllNonConnectedUsersByUserId(anyLong())).thenReturn(List.of(user));
+        when(userRepository.findAllNonConnectedUsersByUserId(anyLong())).thenReturn(users);
         List<User> users=userService.findAllNonConnectedUsersByUserId(2L);
         assertNotNull(users);
+        assertEquals(users.size(),1);
 
     }
 
