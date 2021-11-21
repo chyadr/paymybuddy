@@ -1,23 +1,12 @@
-<databaseChangeLog
-        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
-
-    <changeSet id="20210924-1" author="chaimaa">
-        <sql splitStatements="false">
-            CREATE TABLE pay_user
+        CREATE TABLE pay_user
             (
             id INT PRIMARY KEY NOT NULL,
             first_name VARCHAR(50),
             last_name varchar(50),
             email varchar(100) UNIQUE,
-            balance DECIMAL(10,2),
             user_password varchar (60)
             );
-        </sql>
 
-        <sql splitStatements="false">
 
         CREATE TABLE pay_connection
             (
@@ -28,9 +17,7 @@
             FOREIGN KEY (connected_user_id) REFERENCES pay_user(id),
             constraint not_allow_same_user_id check (user_id!=connected_user_id)
             );
-        </sql>
 
-        <sql splitStatements="false">
 
         CREATE TABLE pay_transaction
             (
@@ -41,14 +28,13 @@
             description varchar(200),
             FOREIGN KEY (user_id,connected_user_id) REFERENCES pay_connection(user_id,connected_user_id)
             );
-        </sql>
 
-        <sql splitStatements="false">
-
+            CREATE TABLE pay_account
+            (
+            id INT PRIMARY KEY NOT NULL,
+            user_id int  NOT NULL,
+            balance DECIMAL(10,2),
+            FOREIGN KEY (user_id) REFERENCES pay_user(id)
+            );
 
         create SEQUENCE seq_ids increment by 1;
-
-        </sql>
-    </changeSet>
-
-</databaseChangeLog>
