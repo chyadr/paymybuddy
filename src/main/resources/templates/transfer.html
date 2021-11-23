@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header">...</div>
+<div th:replace="fragments/navbartransfer :: navbartransfer">...</div>
+
+<div id="errorDiv" class="alert alert-danger" style="display: none">
+    <p id="errors">${errorMessage}</p>
+</div>
+
+    <table class="table table-borderless">
+        <tbody>
+        <tr>
+            <td>
+                <div class="input-group mb-3">
+                    <strong>Send Money</strong>
+                </div>
+            </td>
+            <td></td>
+            <td></td>
+            <td>
+                <button type="button" onclick="updateEmailList()" class="btn btn-primary" data-toggle="modal"
+                        data-target="#addConnection">Add Connection
+                </button>
+
+                <div class="modal fade" id="addConnection" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add Connection By Email</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <select id="selectEmail" required>
+                                    <option value="" selected disabled hidden>Select Email</option>
+                                    <option th:each="nonConnectedUser : ${nonConnectedUsers}"
+                                            th:text="${nonConnectedUser.email}"
+                                            th:value="${nonConnectedUser.id}">
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                                <button type="button" onclick="updateConnectionList()" class="btn btn-primary"
+                                        data-dismiss="modal">Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="input-group mb-3">
+                    <select id="selectConnection" required>
+                        <option value="" selected disabled hidden>Select A Connection</option>
+                        <option th:each="connection : ${connections}"
+                                th:text="${connection.ConnectedUser.firstName}"
+                                th:value="${connection.ConnectedUser.id}">
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="input-group mb-3">
+                    <input id="inputAmount" name="amount" type="number" min="0" step="5" value="0" required/>
+                </div>
+            </td>
+            <div>
+                <td>
+                    <input id="inputDescription" type="text" required class="form-control" placeholder="Description">
+
+                </td>
+            </div>
+            <td>
+                <button type="button" onclick="updateTransactionTable()" class="btn btn-primary">Pay</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="input-group mb-3" id="tableTransaction">
+
+        <table class="table table-striped">
+            <caption style="caption-side: top"><strong>My Transactions</strong></caption>
+            <thead>
+            <tr>
+                <th scope="col">Connections</th>
+                <th scope="col">Type</th>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="transaction : ${transactionPage.content}">
+                <td th:text="${transaction.connection.connectedUser.firstName}"/>
+                <td th:text="${transaction.type}"/>
+                <td th:text="${transaction.description}"/>
+                <td th:text="${transaction.amount}"/>
+            </tr>
+            </tbody>
+        </table>
+        <div th:if="${transactionPage.totalPages > 0}" class="pagination"
+             th:each="pageNumber : ${pageNumbers}">
+            <a th:href="@{/home(size=${transactionPage.size}, page=${pageNumber})}"
+               th:text=${pageNumber}
+               th:class="${pageNumber==transactionPage.number + 1} ? active"></a>
+        </div>
+    </div>
+
+
+<script th:inline="javascript">
+
+function updateEmailList() {
+ $('#errorDiv').hide();
+$.get("listNonConnectedUsers").done(function(fragment) { // get from controller
+        $("#selectEmail").replaceWith(fragment); // update snippet of page
+    });
+ }
+
+ function updateConnectionList() {
+ $('#errorDiv').hide();
+    $.post("saveConnection", {connectedUserId: $("#selectEmail").val()}).done(function(fragment) { // get from controller
+        $("#selectConnection").replaceWith(fragment); // update snippet of page
+    });
+}
+
+ function updateTransactionTable() {
+
+
+
+
+
+     if ($("#selectConnection").val() == null ) {
+     var div_error = '"<p id="errors">${errorMessage}</p>"';
+    $("#errorDiv").html(div_error);
+    $("#errors").replaceWith("Please select a connection before paying");
+    $('#errorDiv').show();
+    return;
+    }
+
+ if ($("#inputAmount").val() < 1 ) {
+     var div_error = '"<p id="errors">${errorMessage}</p>"';
+    $("#errorDiv").html(div_error);
+    $("#errors").replaceWith("Please select an amount before paying");
+    $('#errorDiv').show();
+    return;
+    }
+
+ if ($("#inputDescription").val() == "" ) {
+     var div_error = '"<p id="errors">${errorMessage}</p>"';
+    $("#errorDiv").html(div_error);
+    $("#errors").replaceWith("Please select a description before paying");
+    $('#errorDiv').show();
+    return;
+    }
+
+
+    $('#errors').hide();
+    $.post("saveTransaction",{type: 'DEBIT', connectedUserId: $("#selectConnection").val(),amount: $("#inputAmount").val(),description: $("#inputDescription").val()})
+    .done(function(fragment) {
+        $("#tableTransaction").replaceWith(fragment);
+    }).fail(function(xhr, status, error) {
+    var div_error = '"<p id="errors">${errorMessage}</p>"';
+    $("#errorDiv").html(div_error);
+    var err = JSON.parse(xhr.responseText);
+
+    $("#errors").replaceWith(err.errorMessage);
+    $('#errorDiv').show();
+  });
+
+}
+
+
+
+
+
+</script>
+
+</body>
+</html>

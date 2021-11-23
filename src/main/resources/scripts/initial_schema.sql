@@ -14,8 +14,7 @@
             connected_user_id int NOT NULL,
             PRIMARY KEY(user_id,connected_user_id),
             FOREIGN KEY (user_id) REFERENCES pay_user(id),
-            FOREIGN KEY (connected_user_id) REFERENCES pay_user(id),
-            constraint not_allow_same_user_id check (user_id!=connected_user_id)
+            FOREIGN KEY (connected_user_id) REFERENCES pay_user(id)
             );
 
 
@@ -26,6 +25,7 @@
             connected_user_id int  NOT NULL,
             amount DECIMAL(10,2),
             description varchar(200),
+            type varchar(10),
             FOREIGN KEY (user_id,connected_user_id) REFERENCES pay_connection(user_id,connected_user_id)
             );
 
@@ -34,6 +34,15 @@
             id INT PRIMARY KEY NOT NULL,
             user_id int  NOT NULL,
             balance DECIMAL(10,2),
+            FOREIGN KEY (user_id) REFERENCES pay_user(id)
+            );
+
+            CREATE TABLE bank_account
+            (
+            id INT PRIMARY KEY NOT NULL,
+            user_id int  NOT NULL,
+            iban varchar(200),
+            bic varchar(200),
             FOREIGN KEY (user_id) REFERENCES pay_user(id)
             );
 

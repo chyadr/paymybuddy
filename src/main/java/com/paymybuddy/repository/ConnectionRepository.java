@@ -13,7 +13,8 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long> {
 
     @Query(value = "select connection from Connection as connection "
             +"inner join fetch connection.connectionId.user as user "
-            + "where user.id = :userId")
+            + "where user.id = :userId "
+            + "and connection.connectionId.user != connection.connectionId.connectedUser")
     List<Connection> findAllConnectionsByUserId(@Param("userId") Long userId);
 
 

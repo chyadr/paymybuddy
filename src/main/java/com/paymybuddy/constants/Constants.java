@@ -1,4 +1,4 @@
-package com.paymybuddy;
+package com.paymybuddy.constants;
 
 import java.math.BigDecimal;
 

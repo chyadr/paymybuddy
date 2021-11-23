@@ -28,7 +28,7 @@ public class UserService implements IUserService {
     @Transactional(rollbackFor = BusinessResourceException.class)
     public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // creata account and initialize balance account with 0
+        // create account and initialize balance account with 0
         user.setAccount(new Account().balance(BigDecimal.ZERO).user(user));
         // save the user
         userRepository.save(user);
@@ -42,6 +42,11 @@ public class UserService implements IUserService {
     @Override
     public List<User> findAllNonConnectedUsersByUserId(Long id) {
         return userRepository.findAllNonConnectedUsersByUserId(id);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
 

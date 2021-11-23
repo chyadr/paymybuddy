@@ -1,6 +1,7 @@
 package com.paymybuddy.controller;
 
 
+import com.paymybuddy.dto.BankTransferDTO;
 import com.paymybuddy.model.Transaction;
 import com.paymybuddy.model.User;
 import com.paymybuddy.service.impl.TransactionService;
@@ -9,9 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.security.Principal;
@@ -31,7 +34,7 @@ public class TransactionController {
     }
 
     @RequestMapping(value = { "/saveTransaction" }, method = RequestMethod.POST)
-    public String saveTransaction(Principal principal, @RequestParam Long connectedUserId,@RequestParam BigDecimal amount, @RequestParam String description, Model model){
+    public String saveTransaction(Principal principal,  @RequestParam String type, @RequestParam Long connectedUserId,@RequestParam BigDecimal amount, @RequestParam String description, Model model){
 
         transactionService.saveTransaction( principal,connectedUserId,amount,description);
 
@@ -51,6 +54,16 @@ public class TransactionController {
         }
 
 
-        return "home :: #tableTransaction";
+        return "transfer :: #tableTransaction";
+    }
+
+    @RequestMapping(value = { "/saveBankTransaction" }, method = RequestMethod.POST)
+    public String saveBankTransaction(Principal principal, @ModelAttribute BankTransferDTO bankTransferDTO, Model model){
+
+        transactionService.saveBankTransaction(bankTransferDTO.getBankAccount(),bankTransferDTO.getType(),principal,bankTransferDTO.getAmount(),bankTransferDTO.getDescription());
+
+        model.addAttribute("message","Successful!");
+
+        return "bank-transfer";
     }
 }

@@ -1,7 +1,9 @@
 package com.paymybuddy.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.paymybuddy.constants.TransactionType;
 import liquibase.pro.packaged.L;
+import liquibase.pro.packaged.S;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,12 +20,17 @@ public class Transaction implements Serializable {
     private Long id;
 
     @JsonIgnoreProperties("transactions")
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumns({ @JoinColumn(name = "user_id",
             referencedColumnName = "user_id"),
             @JoinColumn(name = "connected_user_id", referencedColumnName = "connected_user_id")
     })
     private Connection connection;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
+
 
     @Column(name = "amount")
     private BigDecimal amount ;
@@ -42,6 +49,19 @@ public class Transaction implements Serializable {
 
     public Transaction id(Long id) {
         this.id=id  ;
+        return this;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
+
+    public Transaction type(TransactionType type) {
+        this.type=type  ;
         return this;
     }
 

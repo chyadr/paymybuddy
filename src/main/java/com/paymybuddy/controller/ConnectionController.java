@@ -36,6 +36,6 @@ public class ConnectionController {
         List<Connection> connections= connectionService.findAllConnectionsByUserId(persistedUser.getId());
         model.addAttribute("connections",connections);
 
-        return "home :: #selectConnection";
+        return "transfer :: #selectConnection";
     }
 }

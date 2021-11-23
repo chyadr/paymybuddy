@@ -1,8 +1,11 @@
 package com.paymybuddy.controller;
 
+import com.paymybuddy.dto.BankTransferDTO;
+import com.paymybuddy.model.BankAccount;
 import com.paymybuddy.model.Connection;
 import com.paymybuddy.model.Transaction;
 import com.paymybuddy.model.User;
+import com.paymybuddy.service.IBankAccountService;
 import com.paymybuddy.service.ITransactionService;
 import com.paymybuddy.service.IUserService;
 import com.paymybuddy.service.IConnectionService;
@@ -37,14 +40,14 @@ public class MainAuthenticationController {
     private final ITransactionService transactionService;
     private final IUserService userService;
     private final IConnectionService connectionService;
+    private final IBankAccountService bankAccountService;
 
-    public MainAuthenticationController(ITransactionService transactionService, IUserService userService, IConnectionService connectionService) {
+    public MainAuthenticationController(ITransactionService transactionService, IUserService userService, IConnectionService connectionService, IBankAccountService bankAccountService) {
         this.transactionService = transactionService;
         this.userService = userService;
         this.connectionService = connectionService;
+        this.bankAccountService = bankAccountService;
     }
-
-
 
     @RequestMapping(value = { "/register" }, method = RequestMethod.GET)
     public String register(@ModelAttribute User user) {
@@ -62,11 +65,37 @@ public class MainAuthenticationController {
     }
 
     @RequestMapping(value = { "/", "/home" }, method = RequestMethod.GET)
-    public String home(Model model,
-                       Principal principal,
-                       @RequestParam("page") Optional<Integer> page,
-                       @RequestParam("size") Optional<Integer> size) {
+    public String home(Model model, Principal principal) {
 
+        User user = userService.findByEmail(principal.getName());
+
+        model.addAttribute("firstName",user.getFirstName());
+        model.addAttribute("balance",user.getAccount().getBalance());
+
+        return "home";
+    }
+
+    @RequestMapping(value = { "/listNonConnectedUsers" }, method = RequestMethod.GET)
+    public String listNonConnectedUsers(ModelMap model, Principal principal) {
+
+        User persistedUser = userService.findByEmail(principal.getName());
+        List<User> nonConnectedUsers = userService.findAllNonConnectedUsersByUserId(persistedUser.getId());
+        model.addAttribute("nonConnectedUsers",nonConnectedUsers);
+
+        return "transfer :: #selectEmail";
+    }
+
+
+    @RequestMapping(value = { "/logout" }, method = RequestMethod.GET)
+    public String logout(Model model) {
+
+        return "redirect:/login?logout=true";
+    }
+
+    @RequestMapping(value = { "/transfer" }, method = RequestMethod.GET)
+    public String transfer(Model model, Principal principal,
+                           @RequestParam("page") Optional<Integer> page,
+                           @RequestParam("size") Optional<Integer> size) {
 
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(5);
@@ -87,33 +116,24 @@ public class MainAuthenticationController {
         }
 
 
-       List<Connection> connections= connectionService.findAllConnectionsByUserId(persistedUser.getId());
+        List<Connection> connections= connectionService.findAllConnectionsByUserId(persistedUser.getId());
         model.addAttribute("connections",connections);
 
         List<User> nonConnectedUsers = userService.findAllNonConnectedUsersByUserId(persistedUser.getId());
         model.addAttribute("nonConnectedUsers",nonConnectedUsers);
 
-
-
-
-        return "home";
+        return "transfer";
     }
 
-    @RequestMapping(value = { "/listNonConnectedUsers" }, method = RequestMethod.GET)
-    public String listNonConnectedUsers(ModelMap model, Principal principal) {
+    @RequestMapping(value = { "/bank-transfer" }, method = RequestMethod.GET)
+    public String bankTransfer(Model model, @ModelAttribute BankTransferDTO bankTransferDTO,Principal principal) {
 
-        User persistedUser = userService.findByEmail(principal.getName());
-        List<User> nonConnectedUsers = userService.findAllNonConnectedUsersByUserId(persistedUser.getId());
-        model.addAttribute("nonConnectedUsers",nonConnectedUsers);
+        User user =userService.findByEmail(principal.getName());
+        bankTransferDTO.setEmail(user.getEmail());
+        BankAccount bankAccount = bankAccountService.findByUser(user);
+        bankTransferDTO.setBankAccount(bankAccount);
 
-        return "home :: #selectEmail";
-    }
-
-
-    @RequestMapping(value = { "/logout" }, method = RequestMethod.GET)
-    public String logout(Model model,HttpServletRequest request, HttpServletResponse response) {
-
-        return "redirect:/login?logout=true";
+        return "bank-transfer";
     }
 
 }

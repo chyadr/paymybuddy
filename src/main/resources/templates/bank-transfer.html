@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+<div th:replace="fragments/header :: header">...</div>
+<div th:replace="fragments/navbarbanktransfer :: navbarbanktransfer">...</div>
+
+<div class="text-center">
+    <div th:if="${message}" class="alert alert-success">
+        Bank Transfer Successfully Done.
+    </div>
+</div>
+
+
+<form method="POST" th:action="@{/saveBankTransaction}" th:object="${bankTransferDTO}">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+      <fieldset class="form-group">
+        <div class="row">
+            <legend class="col-form-label col-sm-2 pt-0">DEBIT/CREDIT</legend>
+            <div class="col-sm-10">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" th:field="*{type}" value="DEBIT" checked required>
+                    <label class="form-check-label" for="gridRadios1">
+                        Bank Debit (from Bank to PayMyBuddy)
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" th:field="*{type}" value="CREDIT" required>
+                    <label class="form-check-label" for="gridRadios2">
+                        Bank Credit (from PayMyBuddy to Bank)
+                    </label>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group row">
+                    <label for="email" class="col-sm-2 col-form-label">Email</label>
+                    <div class="col-sm-10">
+                    <input type="text"  class="form-control" th:field="*{email}" id="email" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+    <div class="form-group row">
+        <label for="iban" class="col-sm-2 col-form-label">IBAN</label>
+        <div class="col-sm-10">
+            <input th:field="*{bankAccount.iban}" type="text" class="form-control" id="iban" placeholder="IBAN">
+        </div>
+    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+    <div class="form-group row">
+        <label for="bic" class="col-sm-2 col-form-label">BIC</label>
+        <div class="col-sm-10">
+            <input th:field="*{bankAccount.bic}" type="text" class="form-control" id="bic" placeholder="BIC">
+        </div>
+    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+    <div class="form-group row">
+        <label for="bic" class="col-sm-2 col-form-label">Amount</label>
+        <div class="col-sm-10">
+            <input th:field="*{amount}" id="amount" class="form-control" name="amount" type="number" min="0" step="5" value="0" required />
+        </div>
+    </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <div class="form-group row">
+                    <label for="description" class="col-sm-2 col-form-label">Description</label>
+                    <div class="col-sm-10">
+                        <input th:field="*{description}" type="text" class="form-control" id="description" placeholder="description">
+                    </div>
+                </div>
+        <div class="row">
+            <div class="col-sm">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+            <div class="col-sm">
+                <button type="reset" class="btn btn-primary">Reset</button>
+            </div>
+
+        </div>
+    </div>
+
+</form>
+
+<script th:inline="javascript">
+
+function updateEmailList() {
+ $('#errorDiv').hide();
+$.get("listNonConnectedUsers").done(function(fragment) { // get from controller
+        $("#selectEmail").replaceWith(fragment); // update snippet of page
+    });
+ }
+
+ function updateConnectionList() {
+ $('#errorDiv').hide();
+    $.post("saveConnection", {connectedUserId: $("#selectEmail").val()}).done(function(fragment) { // get from controller
+        $("#selectConnection").replaceWith(fragment); // update snippet of page
+    });
+}
+
+ function updateTransactionTable() {
+
+
+
+
+
+     if ($("#selectConnection").val() == null ) {
+     var div_error = '"<p id="errors">${errorMessage}</p>"';
+    $("#errorDiv").html(div_error);
+    $("#errors").replaceWith("Please select a connection before paying");
+    $('#errorDiv').show();
+    return;
+    }
+
+ if ($("#inputAmount").val() < 1 ) {
+     var div_error = '"<p id="errors">${errorMessage}</p>"';
+    $("#errorDiv").html(div_error);
+    $("#errors").replaceWith("Please select an amount before paying");
+    $('#errorDiv').show();
+    return;
+    }
+
+ if ($("#inputDescription").val() == "" ) {
+     var div_error = '"<p id="errors">${errorMessage}</p>"';
+    $("#errorDiv").html(div_error);
+    $("#errors").replaceWith("Please select a description before paying");
+    $('#errorDiv').show();
+    return;
+    }
+
+
+    $('#errors').hide();
+    $.post("saveTransaction",{connectedUserId: $("#selectConnection").val(),amount: $("#inputAmount").val(),description: $("#inputDescription").val()})
+    .done(function(fragment) {
+        $("#tableTransaction").replaceWith(fragment);
+    }).fail(function(xhr, status, error) {
+    var div_error = '"<p id="errors">${errorMessage}</p>"';
+    $("#errorDiv").html(div_error);
+    var err = JSON.parse(xhr.responseText);
+
+    $("#errors").replaceWith(err.errorMessage);
+    $('#errorDiv').show();
+  });
+
+}
+
+
+
+
+
+</script>
+
+</body>
+</html>
