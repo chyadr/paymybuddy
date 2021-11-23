@@ -1,6 +1,6 @@
 package com.paymybuddy.service;
 
-import com.paymybuddy.Constants;
+import com.paymybuddy.ConstantsTest;
 import com.paymybuddy.model.Connection;
 import com.paymybuddy.repository.ConnectionRepository;
 import com.paymybuddy.repository.UserRepository;
@@ -36,7 +36,7 @@ public class ConnectionServiceTest {
         @Test
         public void givenUserId_whenFindAllConnectionsByUserId_thenReturnConnections() {
 
-            when(connectionRepository.findAllConnectionsByUserId(anyLong())).thenReturn(Constants.connectionsWithoutConnection);
+            when(connectionRepository.findAllConnectionsByUserId(anyLong())).thenReturn(ConstantsTest.connectionsWithoutConnection);
             List<Connection> connections = connectionService.findAllConnectionsByUserId(1L);
             assertNotNull(connections);
             assertEquals(connections.size(),1);
@@ -44,11 +44,11 @@ public class ConnectionServiceTest {
         @Test
         public void givenConnectedUserId_whenSaveConnection_thenReturnNothing(){
 
-            when(userRepository.getById(anyLong())).thenReturn(Constants.connectedUser);
-            when(userRepository.findByEmail(anyString())).thenReturn(Constants.user);
-            when(connectionRepository.save(any())).thenReturn(Constants.connection);
+            when(userRepository.getById(anyLong())).thenReturn(ConstantsTest.connectedUser);
+            when(userRepository.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+            when(connectionRepository.save(any())).thenReturn(ConstantsTest.connection);
 
-            connectionService.saveConnection(Constants.principal,2L);
+            connectionService.saveConnection(ConstantsTest.principal,2L);
             verify(connectionRepository,times(1)).save(any());
 
         }

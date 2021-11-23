@@ -1,6 +1,6 @@
 package com.paymybuddy.controller;
 
-import com.paymybuddy.Constants;
+import com.paymybuddy.ConstantsTest;
 import com.paymybuddy.service.impl.ConnectionService;
 import com.paymybuddy.service.impl.TransactionService;
 import com.paymybuddy.service.impl.UserService;
@@ -58,10 +58,10 @@ public class MainAuthenticationControllerTest {
     @Test
     public void givenNothing_whenDefault_thenReturnHome()throws Exception{
 
-        when(userService.findByEmail(anyString())).thenReturn(Constants.user);
-        when(transactionService.findAllByUserId(anyLong(),any())).thenReturn(Constants.pageTransaction);
-        when(connectionService.findAllConnectionsByUserId(anyLong())).thenReturn(Constants.connectionsWithoutConnection);
-        when(userService.findAllNonConnectedUsersByUserId(anyLong())).thenReturn(Constants.users);
+        when(userService.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+        when(transactionService.findAllByUserId(anyLong(),any())).thenReturn(ConstantsTest.pageTransaction);
+        when(connectionService.findAllConnectionsByUserId(anyLong())).thenReturn(ConstantsTest.connectionsWithoutConnection);
+        when(userService.findAllNonConnectedUsersByUserId(anyLong())).thenReturn(ConstantsTest.users);
 
         mvc.perform(get("/")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))

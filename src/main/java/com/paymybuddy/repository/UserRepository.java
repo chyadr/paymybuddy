@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
 
     @Query(value = "select user from User as user "
-            +"inner join fetch user.account  as account "
+            +"left join fetch user.account  as account "
             + "where user.email = :email")
     User findUserAndAccountByEmail( @Param("email") String email);
 

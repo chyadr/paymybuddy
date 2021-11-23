@@ -27,6 +27,7 @@ public class WebMvcConfig extends WebSecurityConfigurerAdapter implements WebMvc
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         http.authorizeRequests()
                 .antMatchers("/register","/saveUser")
                 .permitAll()
@@ -37,13 +38,8 @@ public class WebMvcConfig extends WebSecurityConfigurerAdapter implements WebMvc
                 .permitAll()
                 .and()
                 .logout()
-                .logoutSuccessHandler(new CustomLogoutSuccessHandler())
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .deleteCookies("JSESSIONID")
-                .and().csrf().disable();;
+                .logoutUrl("/login?logout")
+                .and().csrf().disable();
     }
 
     @Override

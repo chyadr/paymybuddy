@@ -1,6 +1,6 @@
 package com.paymybuddy.service;
 
-import com.paymybuddy.Constants;
+import com.paymybuddy.ConstantsTest;
 import com.paymybuddy.exception.BusinessResourceException;
 import com.paymybuddy.model.Transaction;
 import com.paymybuddy.repository.AccountRepository;
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 
-import static com.paymybuddy.Constants.principal;
+import static com.paymybuddy.ConstantsTest.principal;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -43,7 +43,7 @@ public class TransactionServiceTest {
 
         @Test
         public void givenUserIdAndPageable_whenFindAllByUSerId_thenReturnTransactions() {
-        when(transactionRepository.findAllByUSerId(anyLong(),any())).thenReturn(Constants.pageTransaction);
+        when(transactionRepository.findAllByUSerId(anyLong(),any())).thenReturn(ConstantsTest.pageTransaction);
         Page<Transaction> transactions= transactionService.findAllByUserId(1L, Pageable.unpaged());
         assertNotNull(transactions);
         assertEquals(transactions.getTotalPages(),1);
@@ -66,14 +66,14 @@ public class TransactionServiceTest {
         @Test
         public void givenPrincipalAndConnectedUserIdAndAmountAndDescription_whenSaveTransaction_thenReturnNothing(){
 
-                when(userRepository.findUserAndAccountByEmail(anyString())).thenReturn(Constants.user);
-                when(connectionRepository.findConnectionByUserIdAndConnectedUserId(anyLong(),anyLong())).thenReturn(Constants.connection);
-                when(transactionRepository.save(Constants.transaction)).thenReturn(Constants.transaction);
-                when(accountRepository.save(Constants.account)).thenReturn(Constants.account);
+                when(userRepository.findUserAndAccountByEmail(anyString())).thenReturn(ConstantsTest.user);
+                when(connectionRepository.findConnectionByUserIdAndConnectedUserId(anyLong(),anyLong())).thenReturn(ConstantsTest.connection);
+                when(transactionRepository.save(ConstantsTest.transaction)).thenReturn(ConstantsTest.transaction);
+                when(accountRepository.save(ConstantsTest.account)).thenReturn(ConstantsTest.account);
 
                 transactionService.saveTransaction(principal,7L, BigDecimal.valueOf(5),"fff");
-                verify(transactionRepository,times(1)).save(Constants.transaction);
-                verify(accountRepository,times(1)).save(Constants.account);
+                verify(transactionRepository,times(1)).save(ConstantsTest.transaction);
+                verify(accountRepository,times(1)).save(ConstantsTest.account);
 
         }
 }

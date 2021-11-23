@@ -1,6 +1,5 @@
 package com.paymybuddy.service;
 
-import com.paymybuddy.Constants;
 import com.paymybuddy.model.User;
 import com.paymybuddy.repository.UserRepository;
 import com.paymybuddy.service.impl.UserService;
@@ -13,8 +12,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.List;
 
-import static com.paymybuddy.Constants.user;
-import static com.paymybuddy.Constants.users;
+import static com.paymybuddy.ConstantsTest.user;
+import static com.paymybuddy.ConstantsTest.users;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;

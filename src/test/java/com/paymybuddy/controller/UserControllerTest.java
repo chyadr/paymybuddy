@@ -1,6 +1,6 @@
 package com.paymybuddy.controller;
 
-import com.paymybuddy.Constants;
+import com.paymybuddy.ConstantsTest;
 import com.paymybuddy.service.impl.UserService;
 import com.paymybuddy.service.impl.UserServiceDetails;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class UserControllerTest {
 
         doNothing().when(userService).saveUser(any());
 
-        mvc.perform(post("/saveUser").flashAttr("user",Constants.user)
+        mvc.perform(post("/saveUser").flashAttr("user", ConstantsTest.user)
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                         .andExpect(status().isOk()).andExpect(model()
         .attributeExists("message"))

@@ -37,7 +37,7 @@ public class User implements Serializable {
     @JsonIgnoreProperties({"user","connectedUser","connectionId","transactions"})
     private Set<Connection> connections = new HashSet<>();
 
-    @OneToOne(mappedBy ="user" )
+    @OneToOne(mappedBy ="user", cascade = CascadeType.PERSIST)
     @JsonIgnoreProperties("user")
     private Account account;
 

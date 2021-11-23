@@ -1,5 +1,6 @@
 package com.paymybuddy.service.impl;
 
+import com.paymybuddy.Constants;
 import com.paymybuddy.exception.BusinessResourceException;
 import com.paymybuddy.model.Account;
 import com.paymybuddy.model.Connection;
@@ -47,9 +48,9 @@ public class TransactionService implements ITransactionService {
     @Transactional(rollbackFor = {BusinessResourceException.class})
     public void saveTransaction(Principal principal, Long connectedUserId, BigDecimal amount, String description) {
         User user =userRepository.findUserAndAccountByEmail(principal.getName());
+        User connectedUser = userRepository.getById(connectedUserId);
 
-        final BigDecimal amountResult = amount.add(amount).multiply(BigDecimal.valueOf(0.05));
-        if (user == null || user.getAccount() == null || user.getAccount().getBalance().compareTo(amountResult) < 0){
+        if ( user.getAccount() == null || connectedUser.getAccount() == null  || user.getAccount().getBalance().compareTo(amount) < 0){
             throw new BusinessResourceException("Insufficient balance, please check your account before any transfer", HttpStatus.BAD_REQUEST);
         }
 
@@ -61,13 +62,20 @@ public class TransactionService implements ITransactionService {
         transaction.setDescription(description);
         transactionRepository.save(transaction);
 
-        // Update Balance after transaction
-        Account persistedAccount=user.getAccount();
-        persistedAccount.setBalance(persistedAccount.getBalance().subtract(amountResult));
-        accountRepository.save(persistedAccount);
+        // Update Balance after transaction for user to subtract the amount
+        Account persistedUserAccount=user.getAccount();
+        persistedUserAccount.setBalance(persistedUserAccount.getBalance().subtract(amount));
+        accountRepository.save(persistedUserAccount);
+
+        // Update Balance after transaction for connectedUser to add the amount minus the taking percentage
+        Account persistedConnectedUserAccount=connectedUser.getAccount();
+        final BigDecimal amountToSend = amount.multiply(Constants.RATE_TRANSFER);
+        persistedConnectedUserAccount.setBalance(persistedConnectedUserAccount.getBalance().add(amountToSend));
+        accountRepository.save(persistedConnectedUserAccount);
 
 
-        }
+
+    }
 
     }
 

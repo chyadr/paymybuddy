@@ -1,7 +1,6 @@
 package com.paymybuddy.controller;
 
-import com.paymybuddy.Constants;
-import com.paymybuddy.service.impl.ConnectionService;
+import com.paymybuddy.ConstantsTest;
 import com.paymybuddy.service.impl.TransactionService;
 import com.paymybuddy.service.impl.UserService;
 import com.paymybuddy.service.impl.UserServiceDetails;
@@ -38,8 +37,8 @@ public class TransactionControllerTest {
     @Test
     public void givenConnectedUserIdAndAmountAndDescription_whenSaveTransaction_thenReturnTableTransaction() throws Exception {
         doNothing().when(transactionService).saveTransaction(any(),anyLong(),any(),anyString());
-        when(userService.findByEmail(anyString())).thenReturn(Constants.user);
-        when(transactionService.findAllByUserId(anyLong(),any())).thenReturn(Constants.pageTransaction);
+        when(userService.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+        when(transactionService.findAllByUserId(anyLong(),any())).thenReturn(ConstantsTest.pageTransaction);
 
 
             mvc.perform(post("/saveTransaction").param("connectedUserId","1").param("amount","3").param("description","description")

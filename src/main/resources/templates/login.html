@@ -29,6 +29,9 @@
                     <div th:if="${param.logout}" class="alert alert-success">
                         You have been logged out.
                     </div>
+                    <div th:if="${param.expired}" class="alert alert-success">
+                        Session expired.
+                    </div>
                     <div th:if="${param.message}" class="alert alert-success">
                         User Successfully Created.
                     </div>

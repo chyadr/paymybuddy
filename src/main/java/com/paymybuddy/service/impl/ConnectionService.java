@@ -4,13 +4,14 @@ import com.paymybuddy.model.Connection;
 import com.paymybuddy.model.User;
 import com.paymybuddy.repository.ConnectionRepository;
 import com.paymybuddy.repository.UserRepository;
+import com.paymybuddy.service.IConnectionService;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
 
 @Service
-public class ConnectionService implements IConnectionService{
+public class ConnectionService implements IConnectionService {
     private final ConnectionRepository connectionRepository;
     private final UserRepository userRepository;
 

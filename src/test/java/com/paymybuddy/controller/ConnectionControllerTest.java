@@ -1,6 +1,6 @@
 package com.paymybuddy.controller;
 
-import com.paymybuddy.Constants;
+import com.paymybuddy.ConstantsTest;
 import com.paymybuddy.service.impl.ConnectionService;
 import com.paymybuddy.service.impl.UserService;
 import com.paymybuddy.service.impl.UserServiceDetails;
@@ -39,8 +39,8 @@ public class ConnectionControllerTest {
     public void givenConnectedUserId_whenSaveConnection_thenReturnConnections() throws Exception {
 
         doNothing().when(connectionService).saveConnection(any(), anyLong());
-        when(userService.findByEmail(anyString())).thenReturn(Constants.user);
-        when(connectionService.findAllConnectionsByUserId(anyLong())).thenReturn(Constants.connectionsWithoutConnection);
+        when(userService.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+        when(connectionService.findAllConnectionsByUserId(anyLong())).thenReturn(ConstantsTest.connectionsWithoutConnection);
 
         mvc.perform(post("/saveConnection").param("connectedUserId","1")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))

@@ -8,6 +8,9 @@
             values (nextval('seq_ids'),'Caroline','MASA','caroline.masa@gmail.com','$2a$10$UWlBa/1x.vBuTaWGtjK2putvqNidATBYqsbbIRlouUPzk8OKfUM9m');
 
             insert into pay_account (id,user_id,balance)
+            values (nextval('seq_ids'),(select id from pay_user where first_name='Bank'),1000000);
+
+            insert into pay_account (id,user_id,balance)
             values (nextval('seq_ids'),(select id from pay_user where first_name='David'),2000);
 
             insert into pay_account (id,user_id,balance)

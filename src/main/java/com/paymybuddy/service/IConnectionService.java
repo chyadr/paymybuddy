@@ -1,4 +1,4 @@
-package com.paymybuddy.service.impl;
+package com.paymybuddy.service;
 
 import com.paymybuddy.model.Connection;
 
