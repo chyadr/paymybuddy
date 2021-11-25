@@ -41,6 +41,10 @@ public class User implements Serializable {
     @JsonIgnoreProperties("user")
     private Account account;
 
+    @OneToOne(mappedBy ="user")
+    @JsonIgnoreProperties("user")
+    private BankAccount bankAccount;
+
     public Account getAccount() {
         return account;
     }
@@ -54,6 +58,18 @@ public class User implements Serializable {
         return this;
     }
 
+    public BankAccount getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(BankAccount bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    public User bankAccount (BankAccount bankAccount) {
+        this.bankAccount=bankAccount  ;
+        return this;
+    }
 
     public Long getId() {
         return id;

@@ -36,7 +36,7 @@ https:https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 - Post installation of Postgres, Java and Maven, you have to :
 - Set up Environment variables (database url, user and password) like screen bellow :
 
-![img_1.png](img_1.png)
+![en_variables.png](env_variables.png)
 
 - Create the Database (Database name should be the same as the name mentioned before)
         
@@ -67,7 +67,12 @@ https:https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 # Documentation
 
 
+- Class Diagram
+
+![class_diagram.jpeg](class_diagram.jpeg)
+
+- Physical Data Model
 
 
-
+![physiical_data_model.jpeg](physical_data_model.jpeg)
 
