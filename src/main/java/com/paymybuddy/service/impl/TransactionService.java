@@ -24,17 +24,16 @@ import java.security.Principal;
 public class TransactionService implements ITransactionService {
 
     private final TransactionRepository transactionRepository;
-    private final ConnectionRepository connectionRepository;
-    private final UserRepository userRepository;
-    private final AccountRepository accountRepository;
+    private final ConnectionService connectionService;
+    private final UserService userService;
+    private final AccountService accountService;
     private final BankAccountService bankAccountService;
 
-
-    public TransactionService(TransactionRepository transactionRepository, ConnectionRepository connectionRepository, UserRepository userRepository, AccountRepository accountRepository, BankAccountService bankAccountService) {
+    public TransactionService(TransactionRepository transactionRepository, ConnectionService connectionService, UserService userService, AccountService accountService, BankAccountService bankAccountService) {
         this.transactionRepository = transactionRepository;
-        this.connectionRepository = connectionRepository;
-        this.userRepository = userRepository;
-        this.accountRepository = accountRepository;
+        this.connectionService = connectionService;
+        this.userService = userService;
+        this.accountService = accountService;
         this.bankAccountService = bankAccountService;
     }
 
@@ -46,8 +45,8 @@ public class TransactionService implements ITransactionService {
     @Override
     @Transactional(rollbackFor = {BusinessResourceException.class})
     public void saveTransaction(Principal principal, Long connectedUserId, BigDecimal amount, String description) {
-        User user =userRepository.findUserAndAccountByEmail(principal.getName());
-        User connectedUser = userRepository.getById(connectedUserId);
+        User user =userService.findUserAndAccountByEmail(principal.getName());
+        User connectedUser = userService.getById(connectedUserId);
 
         if ( connectedUser.getAccount() == null  || user.getAccount().getBalance().compareTo(amount) < 0){
             throw new BusinessResourceException("Insufficient balance, please check your account before any transfer", HttpStatus.BAD_REQUEST);
@@ -55,7 +54,7 @@ public class TransactionService implements ITransactionService {
 
         Transaction transaction= new Transaction();
 
-        Connection connection=connectionRepository.findConnectionByUserIdAndConnectedUserId(user.getId(),connectedUserId );
+        Connection connection=connectionService.findConnectionByUserIdAndConnectedUserId(user.getId(),connectedUserId );
         transaction.setConnection(connection);
         transaction.setType(TransactionType.CREDIT);
         transaction.setAmount(amount);
@@ -65,19 +64,20 @@ public class TransactionService implements ITransactionService {
         // Update Balance after transaction for user to subtract the amount
         Account persistedUserAccount=user.getAccount();
         persistedUserAccount.setBalance(persistedUserAccount.getBalance().subtract(amount));
-        accountRepository.save(persistedUserAccount);
+        accountService.saveAccount(persistedUserAccount);
 
         // Update Balance after transaction for connectedUser to add the amount minus the taking percentage
         Account persistedConnectedUserAccount=connectedUser.getAccount();
         final BigDecimal amountToSend = amount.multiply(Constants.RATE_TRANSFER);
         persistedConnectedUserAccount.setBalance(persistedConnectedUserAccount.getBalance().add(amountToSend));
-        accountRepository.save(persistedConnectedUserAccount);
+        accountService.saveAccount(persistedConnectedUserAccount);
 
     }
 
     @Override
+    @Transactional(rollbackFor = BusinessResourceException.class)
     public void saveBankTransaction(BankAccount bankAccount, String type, Principal principal, BigDecimal amount, String description) {
-        User user =userRepository.findUserAndAccountByEmail(principal.getName());
+        User user =userService.findUserAndAccountByEmail(principal.getName());
         boolean isDebit = TransactionType.DEBIT.name().equals(type);
 
         if ( isDebit &&  user.getAccount().getBalance().compareTo(amount) < 0){
@@ -97,7 +97,7 @@ public class TransactionService implements ITransactionService {
 
 
         Transaction transaction= new Transaction();
-        Connection connection=connectionRepository.findConnectionByUserIdAndConnectedUserId(user.getId(),user.getId() );
+        Connection connection=connectionService.findConnectionByUserIdAndConnectedUserId(user.getId(),user.getId() );
         if(connection == null){
             connection =new Connection().user(user).connectedUser(user);
         }
@@ -111,8 +111,8 @@ public class TransactionService implements ITransactionService {
         // Update Balance after transaction for user to subtract the amount
         Account persistedUserAccount=user.getAccount();
         final BigDecimal amountToSend = amount.multiply(Constants.RATE_TRANSFER);
-        persistedUserAccount.setBalance(isDebit ? persistedUserAccount.getBalance().add(amountToSend) : persistedUserAccount.getBalance().subtract(amount));
-        accountRepository.save(persistedUserAccount);
+        persistedUserAccount.setBalance(isDebit ? persistedUserAccount.getBalance().subtract(amount) : persistedUserAccount.getBalance().add(amountToSend));
+        accountService.saveAccount(persistedUserAccount);
 
 
     }

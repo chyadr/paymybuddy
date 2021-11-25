@@ -5,6 +5,7 @@ import com.paymybuddy.model.Connection;
 import com.paymybuddy.repository.ConnectionRepository;
 import com.paymybuddy.repository.UserRepository;
 import com.paymybuddy.service.impl.ConnectionService;
+import com.paymybuddy.service.impl.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,7 +30,7 @@ public class ConnectionServiceTest {
         @Mock
         private ConnectionRepository connectionRepository;
         @Mock
-        private UserRepository userRepository;
+        private UserService userService;
 
 
 
@@ -44,8 +45,8 @@ public class ConnectionServiceTest {
         @Test
         public void givenConnectedUserId_whenSaveConnection_thenReturnNothing(){
 
-            when(userRepository.getById(anyLong())).thenReturn(ConstantsTest.connectedUser);
-            when(userRepository.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+            when(userService.getById(anyLong())).thenReturn(ConstantsTest.connectedUser);
+            when(userService.findByEmail(anyString())).thenReturn(ConstantsTest.user);
             when(connectionRepository.save(any())).thenReturn(ConstantsTest.connection);
 
             connectionService.saveConnection(ConstantsTest.principal,2L);
@@ -55,19 +56,3 @@ public class ConnectionServiceTest {
 
 
 }
-
-/*
-@Override
-public void saveConnection(Principal principal, Long connectedUserId) {
-
-        Connection connection= new Connection();
-        //Find and set connectedUser by id
-        User connectedUser=userRepository.getById(connectedUserId);
-        connection.setConnectedUser(connectedUser);
-        //Find and set user by principal
-        User persistedUser = userRepository.findByEmail(principal.getName());
-        connection.setUser(persistedUser);
-
-        connectionRepository.save(connection);
-        }
-*/

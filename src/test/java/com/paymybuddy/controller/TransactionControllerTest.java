@@ -41,11 +41,11 @@ public class TransactionControllerTest {
         when(transactionService.findAllByUserId(anyLong(),any())).thenReturn(ConstantsTest.pageTransaction);
 
 
-            mvc.perform(post("/saveTransaction").param("connectedUserId","1").param("amount","3").param("description","description")
+            mvc.perform(post("/saveTransaction").param("connectedUserId","1").param("amount","3").param("description","description").param("type","type")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                         .andExpect(status().isOk()).andExpect(model()
         .attributeExists("transactionPage"))
-                .andExpect(view().name("home :: #tableTransaction"));
+                .andExpect(view().name("transfer :: #tableTransaction"));
     }
 
 }

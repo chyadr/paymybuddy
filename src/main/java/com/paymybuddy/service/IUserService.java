@@ -10,6 +10,7 @@ public interface IUserService {
         void saveUser(User user);
         User findByEmail(String email);
         List<User> findAllNonConnectedUsersByUserId(Long id);
-        List<User> findAll();
+        User getById(Long id);
+        User findUserAndAccountByEmail(String email);
 
 }

@@ -1,6 +1,7 @@
 package com.paymybuddy.controller;
 
 import com.paymybuddy.ConstantsTest;
+import com.paymybuddy.service.IBankAccountService;
 import com.paymybuddy.service.impl.ConnectionService;
 import com.paymybuddy.service.impl.TransactionService;
 import com.paymybuddy.service.impl.UserService;
@@ -35,7 +36,8 @@ public class MainAuthenticationControllerTest {
     private TransactionService transactionService;
     @MockBean
     private UserServiceDetails userServiceDetails;
-
+    @MockBean
+    private IBankAccountService bankAccountService;
 
     @Test
     public void givenUser_whenRegister_thenReturnRegister() throws Exception {
@@ -66,8 +68,23 @@ public class MainAuthenticationControllerTest {
         mvc.perform(get("/")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                 .andExpect(status().isOk()).andExpect(model()
-                        .attributeExists("transactionPage","pageNumbers","connections","nonConnectedUsers"));
+                        .attributeExists("firstName","balance"));
         mvc.perform(get("/home")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk()).andExpect(model()
+                        .attributeExists("firstName","balance"));
+
+    }
+
+    @Test
+    public void givenNothing_whenDefault_thenReturnTransfer()throws Exception{
+
+        when(userService.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+        when(transactionService.findAllByUserId(anyLong(),any())).thenReturn(ConstantsTest.pageTransaction);
+        when(connectionService.findAllConnectionsByUserId(anyLong())).thenReturn(ConstantsTest.connectionsWithoutConnection);
+        when(userService.findAllNonConnectedUsersByUserId(anyLong())).thenReturn(ConstantsTest.users);
+
+        mvc.perform(get("/transfer")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                 .andExpect(status().isOk()).andExpect(model()
                         .attributeExists("transactionPage","pageNumbers","connections","nonConnectedUsers"));

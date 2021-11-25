@@ -7,7 +7,7 @@ import com.paymybuddy.repository.AccountRepository;
 import com.paymybuddy.repository.ConnectionRepository;
 import com.paymybuddy.repository.TransactionRepository;
 import com.paymybuddy.repository.UserRepository;
-import com.paymybuddy.service.impl.TransactionService;
+import com.paymybuddy.service.impl.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.math.BigDecimal;
 
 import static com.paymybuddy.ConstantsTest.principal;
+import static com.paymybuddy.ConstantsTest.user;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -32,11 +33,12 @@ public class TransactionServiceTest {
         @Mock
         private TransactionRepository transactionRepository;
         @Mock
-        private UserRepository userRepository;
+        private UserService userService;
         @Mock
-        private ConnectionRepository connectionRepository;
+        private ConnectionService connectionService;
         @Mock
-        private AccountRepository accountRepository;
+        private AccountService accountService;
+
 
 
 
@@ -53,7 +55,8 @@ public class TransactionServiceTest {
         @Test
         public void givenPrincipalAndConnectedUserIdAndAmountAndDescription_whenSaveTransaction_thenThrowException(){
 
-                when(userRepository.findUserAndAccountByEmail(anyString())).thenReturn(null);
+                when(userService.findUserAndAccountByEmail(anyString())).thenReturn(user);
+                when(userService.getById(anyLong())).thenReturn(ConstantsTest.connectedUserWithoutAccount);
 
                 assertThrows(
                         BusinessResourceException.class,
@@ -66,14 +69,15 @@ public class TransactionServiceTest {
         @Test
         public void givenPrincipalAndConnectedUserIdAndAmountAndDescription_whenSaveTransaction_thenReturnNothing(){
 
-                when(userRepository.findUserAndAccountByEmail(anyString())).thenReturn(ConstantsTest.user);
-                when(connectionRepository.findConnectionByUserIdAndConnectedUserId(anyLong(),anyLong())).thenReturn(ConstantsTest.connection);
+                when(userService.findUserAndAccountByEmail(anyString())).thenReturn(ConstantsTest.user);
+                when(userService.getById(anyLong())).thenReturn(ConstantsTest.connectedUser);
+                when(connectionService.findConnectionByUserIdAndConnectedUserId(anyLong(),anyLong())).thenReturn(ConstantsTest.connection);
                 when(transactionRepository.save(ConstantsTest.transaction)).thenReturn(ConstantsTest.transaction);
-                when(accountRepository.save(ConstantsTest.account)).thenReturn(ConstantsTest.account);
+                when(accountService.saveAccount(ConstantsTest.account)).thenReturn(ConstantsTest.account);
 
                 transactionService.saveTransaction(principal,7L, BigDecimal.valueOf(5),"fff");
                 verify(transactionRepository,times(1)).save(ConstantsTest.transaction);
-                verify(accountRepository,times(1)).save(ConstantsTest.account);
+                verify(accountService,times(2)).saveAccount(ConstantsTest.account);
 
         }
 }

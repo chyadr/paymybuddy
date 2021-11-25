@@ -16,7 +16,8 @@ public final class ConstantsTest {
 
 public static final Account account= new Account().id(3l).balance(BigDecimal.valueOf(1000));
     public static final User user= new User().id(1l).firstName("FirstName").lastName("LastName").email("Email").password("Password").account(account);
-    public static final User connectedUser= new User().id(2l).firstName("FirstName2").lastName("LastName2").email("Email2").password("password2");
+    public static final User connectedUser= new User().id(2l).firstName("FirstName2").lastName("LastName2").email("Email2").password("password2").account(account);
+    public static final User connectedUserWithoutAccount= new User().id(2l).firstName("FirstName2").lastName("LastName2").email("Email2").password("password2");
     public static final List<User> users= Collections.singletonList(connectedUser);
     public static final Connection connection=new Connection().user(user).connectedUser(connectedUser).connectionId(new ConnectionId().user(user).connectionId(connectedUser));
     public static final Transaction transaction= new Transaction().connection(connection).amount(BigDecimal.TEN).description("Description");

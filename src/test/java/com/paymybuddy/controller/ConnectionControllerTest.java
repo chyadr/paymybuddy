@@ -46,7 +46,7 @@ public class ConnectionControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                         .andExpect(status().isOk()).andExpect(model()
         .attributeExists("connections"))
-                .andExpect(view().name("home :: #selectConnection"));
+                .andExpect(view().name("transfer :: #selectConnection"));
     }
 
 }

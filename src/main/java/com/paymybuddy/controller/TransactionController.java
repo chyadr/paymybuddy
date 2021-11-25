@@ -2,6 +2,7 @@ package com.paymybuddy.controller;
 
 
 import com.paymybuddy.dto.BankTransferDTO;
+import com.paymybuddy.exception.BusinessResourceException;
 import com.paymybuddy.model.Transaction;
 import com.paymybuddy.model.User;
 import com.paymybuddy.service.impl.TransactionService;
@@ -60,9 +61,15 @@ public class TransactionController {
     @RequestMapping(value = { "/saveBankTransaction" }, method = RequestMethod.POST)
     public String saveBankTransaction(Principal principal, @ModelAttribute BankTransferDTO bankTransferDTO, Model model){
 
-        transactionService.saveBankTransaction(bankTransferDTO.getBankAccount(),bankTransferDTO.getType(),principal,bankTransferDTO.getAmount(),bankTransferDTO.getDescription());
+        try {
+            transactionService.saveBankTransaction(bankTransferDTO.getBankAccount(),bankTransferDTO.getType(),principal,bankTransferDTO.getAmount(),bankTransferDTO.getDescription());
+            model.addAttribute("message","Successful!");
+        }
+        catch (BusinessResourceException ex){
+            model.addAttribute("errorMessage","Error!");
+        }
 
-        model.addAttribute("message","Successful!");
+
 
         return "bank-transfer";
     }

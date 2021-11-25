@@ -45,8 +45,13 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public User getById(Long id) {
+        return userRepository.getById(id);
+    }
+
+    @Override
+    public User findUserAndAccountByEmail(String email) {
+        return userRepository.findUserAndAccountByEmail(email);
     }
 
 

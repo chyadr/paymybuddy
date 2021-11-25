@@ -13,11 +13,11 @@ import java.util.List;
 @Service
 public class ConnectionService implements IConnectionService {
     private final ConnectionRepository connectionRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public ConnectionService(ConnectionRepository connectionRepository, UserRepository userRepository) {
+    public ConnectionService(ConnectionRepository connectionRepository, UserService userService) {
         this.connectionRepository = connectionRepository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -30,13 +30,18 @@ public class ConnectionService implements IConnectionService {
 
         Connection connection= new Connection();
         //Find and set connectedUser by id
-        User connectedUser=userRepository.getById(connectedUserId);
+        User connectedUser=userService.getById(connectedUserId);
         connection.setConnectedUser(connectedUser);
         //Find and set user by principal
-        User persistedUser = userRepository.findByEmail(principal.getName());
+        User persistedUser = userService.findByEmail(principal.getName());
         connection.setUser(persistedUser);
 
         connectionRepository.save(connection);
+    }
+
+    @Override
+    public Connection findConnectionByUserIdAndConnectedUserId(Long userId, Long connectedUserId) {
+        return connectionRepository.findConnectionByUserIdAndConnectedUserId(userId,connectedUserId);
     }
 
 }

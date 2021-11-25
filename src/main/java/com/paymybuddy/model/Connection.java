@@ -11,7 +11,6 @@ import java.util.Objects;
 @Table(name = "pay_connection")
 @AssociationOverrides({@AssociationOverride(name = "connection.user", joinColumns = @JoinColumn(name = "user_id")),
         @AssociationOverride(name = "connection.connectedUser", joinColumns = @JoinColumn(name = "connected_user_id"))})
-//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "connectionId")
 public class Connection implements Serializable {
 
 
