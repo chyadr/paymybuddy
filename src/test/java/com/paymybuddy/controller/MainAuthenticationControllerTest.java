@@ -2,6 +2,9 @@ package com.paymybuddy.controller;
 
 import com.paymybuddy.ConstantsTest;
 import com.paymybuddy.service.IBankAccountService;
+import com.paymybuddy.service.IConnectionService;
+import com.paymybuddy.service.ITransactionService;
+import com.paymybuddy.service.IUserService;
 import com.paymybuddy.service.impl.ConnectionService;
 import com.paymybuddy.service.impl.TransactionService;
 import com.paymybuddy.service.impl.UserService;
@@ -16,6 +19,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,11 +34,11 @@ public class MainAuthenticationControllerTest {
     @Autowired
     private MockMvc mvc;
     @MockBean
-    private ConnectionService connectionService;
+    private IConnectionService connectionService;
     @MockBean
-    private UserService userService;
+    private IUserService userService;
     @MockBean
-    private TransactionService transactionService;
+    private ITransactionService transactionService;
     @MockBean
     private UserServiceDetails userServiceDetails;
     @MockBean
@@ -56,6 +61,22 @@ public class MainAuthenticationControllerTest {
                 .andExpect(view().name("login"));
     }
 
+    @Test
+    public void givenNothing_whenLoginParamLogout_thenReturnLogin() throws Exception {
+        mvc.perform(get("/login").param("logout","true")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"));
+    }
+
+
+    @Test
+    public void givenNothing_whenLogout_thenReturnRedirectLogin() throws Exception {
+        mvc.perform(get("/logout")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/login?logout=true"));
+    }
 
     @Test
     public void givenNothing_whenDefault_thenReturnHome()throws Exception{
@@ -90,5 +111,32 @@ public class MainAuthenticationControllerTest {
                         .attributeExists("transactionPage","pageNumbers","connections","nonConnectedUsers"));
 
     }
+
+    @Test
+    public void givenNothing_whenBankTransfer_thenReturnBankTransfer()throws Exception{
+
+        when(userService.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+        when(bankAccountService.findByUser(any())).thenReturn(ConstantsTest.bankAccount);
+
+        mvc.perform(get("/bank-transfer")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void givenNothing_whenListNonConnectedUsers_thenReturnTransferWithEmailList()throws Exception{
+
+        when(userService.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+        when(userService.findAllNonConnectedUsersByUserId(anyLong())).thenReturn(Collections.singletonList(ConstantsTest.user));
+
+        mvc.perform(get("/listNonConnectedUsers")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk()).andExpect(model()
+                        .attributeExists("nonConnectedUsers"));
+
+
+    }
+
 
 }

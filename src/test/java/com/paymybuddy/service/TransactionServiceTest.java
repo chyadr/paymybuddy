@@ -18,8 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 
-import static com.paymybuddy.ConstantsTest.principal;
-import static com.paymybuddy.ConstantsTest.user;
+import static com.paymybuddy.ConstantsTest.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -38,6 +37,8 @@ public class TransactionServiceTest {
         private ConnectionService connectionService;
         @Mock
         private AccountService accountService;
+        @Mock
+        private BankAccountService bankAccountService;
 
 
 
@@ -80,4 +81,68 @@ public class TransactionServiceTest {
                 verify(accountService,times(2)).saveAccount(ConstantsTest.account);
 
         }
+
+
+
+        @Test
+        public void givenBankAccountAndTypeAndPrincipalAndAmountAndDescription_whenSaveBankTransaction_thenThrowException(){
+
+                when(userService.findUserAndAccountByEmail(anyString())).thenReturn(userWithZeroBalance);
+
+                assertThrows(
+                        BusinessResourceException.class,
+                        () -> transactionService.saveBankTransaction(bankAccount,"DEBIT",principal, BigDecimal.valueOf(5),"fff"),
+                        "Insufficient balance, please check your account before any transfer"
+                );
+
+        }
+
+        @Test
+        public void givenBankAccountAndTypeAndPrincipalAndAmountAndDescription_whenSaveBankTransaction_thenReturnNothing(){
+
+                when(userService.findUserAndAccountByEmail(anyString())).thenReturn(ConstantsTest.user);
+                when(bankAccountService.findByUser(any())).thenReturn(bankAccount);
+                when(bankAccountService.saveBankAccount(any())).thenReturn(bankAccount);
+                when(connectionService.findConnectionByUserIdAndConnectedUserId(anyLong(),anyLong())).thenReturn(ConstantsTest.connection);
+                when(transactionRepository.save(ConstantsTest.transaction)).thenReturn(ConstantsTest.transaction);
+                when(accountService.saveAccount(ConstantsTest.account)).thenReturn(ConstantsTest.account);
+
+                transactionService.saveBankTransaction(bankAccount,"CREDIT",principal, BigDecimal.valueOf(5),"fff");
+                verify(transactionRepository,times(1)).save(ConstantsTest.transaction);
+                verify(accountService,times(1)).saveAccount(ConstantsTest.account);
+
+        }
+
+        @Test
+        public void givenBankAccountAndTypeAndPrincipalAndAmountAndDescription_whenSaveBankTransactionNewBankAccount_thenReturnNothing(){
+
+                when(userService.findUserAndAccountByEmail(anyString())).thenReturn(ConstantsTest.user);
+                when(bankAccountService.findByUser(any())).thenReturn(null);
+                when(bankAccountService.saveBankAccount(any())).thenReturn(bankAccount);
+                when(connectionService.findConnectionByUserIdAndConnectedUserId(anyLong(),anyLong())).thenReturn(ConstantsTest.connection);
+                when(transactionRepository.save(ConstantsTest.transaction)).thenReturn(ConstantsTest.transaction);
+                when(accountService.saveAccount(ConstantsTest.account)).thenReturn(ConstantsTest.account);
+
+                transactionService.saveBankTransaction(bankAccount,"CREDIT",principal, BigDecimal.valueOf(5),"fff");
+                verify(transactionRepository,times(1)).save(ConstantsTest.transaction);
+                verify(accountService,times(1)).saveAccount(ConstantsTest.account);
+
+        }
+
+        @Test
+        public void givenBankAccountAndTypeAndPrincipalAndAmountAndDescription_whenSaveBankTransactionNewConnection_thenReturnNothing(){
+
+                when(userService.findUserAndAccountByEmail(anyString())).thenReturn(ConstantsTest.user);
+                when(bankAccountService.findByUser(any())).thenReturn(bankAccount);
+                when(bankAccountService.saveBankAccount(any())).thenReturn(bankAccount);
+                when(connectionService.findConnectionByUserIdAndConnectedUserId(anyLong(),anyLong())).thenReturn(null);
+                when(transactionRepository.save(ConstantsTest.transaction)).thenReturn(ConstantsTest.transaction);
+                when(accountService.saveAccount(ConstantsTest.account)).thenReturn(ConstantsTest.account);
+
+                transactionService.saveBankTransaction(bankAccount,"CREDIT",principal, BigDecimal.valueOf(5),"fff");
+                verify(transactionRepository,times(1)).save(ConstantsTest.transaction);
+                verify(accountService,times(1)).saveAccount(ConstantsTest.account);
+
+        }
+
 }

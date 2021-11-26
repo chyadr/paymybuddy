@@ -28,8 +28,8 @@ public class BankAccountService implements IBankAccountService {
 
     @Override
     @Transactional(rollbackFor = BusinessResourceException.class)
-    public void saveBankAccount(BankAccount bankAccount) {
-        bankAccountRepository.save(bankAccount);
+    public BankAccount saveBankAccount(BankAccount bankAccount) {
+        return bankAccountRepository.save(bankAccount);
     }
 
     @Override

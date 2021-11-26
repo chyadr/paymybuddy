@@ -46,9 +46,8 @@ public class TransactionController {
 
         model.addAttribute("transactionPage", transactionPage);
 
-        int totalPages = transactionPage.getTotalPages();
-        if (totalPages > 0) {
-            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+        if (!transactionPage.isEmpty()) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, transactionPage.getTotalPages())
                     .boxed()
                     .collect(Collectors.toList());
             model.addAttribute("pageNumbers", pageNumbers);

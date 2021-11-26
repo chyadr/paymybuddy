@@ -44,8 +44,33 @@ public class TransactionControllerTest {
             mvc.perform(post("/saveTransaction").param("connectedUserId","1").param("amount","3").param("description","description").param("type","type")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
                         .andExpect(status().isOk()).andExpect(model()
-        .attributeExists("transactionPage"))
+        .attributeExists("transactionPage","pageNumbers"))
                 .andExpect(view().name("transfer :: #tableTransaction"));
+    }
+
+    @Test
+    public void givenConnectedUserIdAndAmountAndDescription_whenSaveTransaction_thenReturnTableTransactionEmpty() throws Exception {
+        doNothing().when(transactionService).saveTransaction(any(),anyLong(),any(),anyString());
+        when(userService.findByEmail(anyString())).thenReturn(ConstantsTest.user);
+        when(transactionService.findAllByUserId(anyLong(),any())).thenReturn(ConstantsTest.pageTransactionEmpty);
+
+
+        mvc.perform(post("/saveTransaction").param("connectedUserId","1").param("amount","3").param("description","description").param("type","type")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk()).andExpect(model()
+                        .attributeExists("transactionPage"))
+                .andExpect(view().name("transfer :: #tableTransaction"));
+    }
+
+    @Test
+    public void givenConnectedUserIdAndAmountAndDescription_whenSaveBankTransaction_thenReturnBankTransfer() throws Exception {
+        doNothing().when(transactionService).saveBankTransaction(any(),anyString(),any(),any(),anyString());
+
+        mvc.perform(post("/saveBankTransaction").param("bankTransferDTO","")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE))
+                .andExpect(status().isOk()).andExpect(model()
+                        .attributeExists("message"))
+                .andExpect(view().name("bank-transfer"));
     }
 
 }
