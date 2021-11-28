@@ -3,12 +3,8 @@ package com.paymybuddy;
 import com.paymybuddy.model.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.math.BigDecimal;
 import java.security.Principal;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

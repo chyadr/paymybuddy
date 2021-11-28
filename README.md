@@ -8,6 +8,7 @@
 - Spring Transactional 5.3.12
 - Spring Data 5.3.12
 - Hibernate 4.4.32
+- JPA
 - Liquibase 4.4.3
 - Java 11
 - Thymeleaf 2.5.6
